@@ -70,8 +70,7 @@ const Spotify = {
         method: 'POST',
         body: JSON.stringify({
           name: playlistName,
-        }),
-
+        })
       }).then(response => {
         console.log(response)
       })
