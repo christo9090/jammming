@@ -1,6 +1,6 @@
 let token = ''
 const clientId = '4fb81ef050e74cbaaf997902201723ea'
-const redirectUri = 'http://localhost:3000/'
+const redirectUri = 'http://wackassspotifyplaylistthing.surge.sh'
 
 const Spotify = {
   getAccessToken() {
@@ -49,7 +49,6 @@ const Spotify = {
         })
 
     })
-    console.log(accessToken)
   },
 
   savePlaylist(playlistName, trackUris) {
@@ -59,26 +58,34 @@ const Spotify = {
     let accessToken = Spotify.getAccessToken();
     let headers = {Authorization: `Bearer ${accessToken}`};
     let userId = ''
-    return fetch('https://api.spotify.com/v1/me', {headers: headers}).then(response => {
+    return fetch('https://api.spotify.com/v1/me',
+    {
+      headers: headers
+    }).then(response => {
       return response.json()
     }).then(responseJson => {
       // console.log(responseJson)
       userId = responseJson.id
       return fetch(`https://api.spotify.com/v1/users/${userId}/playlists`,
-        {
+      {
         headers: headers,
         method: 'POST',
-        body: JSON.stringify({
-          name: playlistName,
-        })
+        body: JSON.stringify({ name: playlistName, })
       }).then(response => {
-        console.log(response)
+        return response.json()
+      }).then(responseJson => {
+        console.log(responseJson)
+        let playlistId = responseJson.id;
+
+        return fetch(`https://api.spotify.com/v1/playlists/${playlistId}/tracks`,
+        {
+          headers: headers,
+          method: 'POST',
+          body: JSON.stringify({ uris: trackUris }),
+        })
       })
-
     })
-
   }
-
-}
+};
 
 export default Spotify
